@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package audit;
+
+// Сервис с методом LogAction
+service AuditService {
+  rpc LogAction (AuditLogRequest) returns (LogResponse);
+}
+
+// Запрос от User Service после действия над пользователем
+message AuditLogRequest {
+  string action = 1;       // Например: "user_created", "user_updated"
+  int32 entity_type = 2;   // Например: 1 — User
+  string entity_id = 3;    // UUID пользователя
+  string timestamp = 4;    // Дата/время действия (ISO-формат)
+}
+
+// Ответ от Audit Service
+message LogResponse {
+  bool success = 1;
+}
