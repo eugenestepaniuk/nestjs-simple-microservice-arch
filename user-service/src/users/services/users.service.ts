@@ -1,15 +1,17 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ClientGrpc } from '@nestjs/microservices';
+import { Observable, firstValueFrom } from 'rxjs';
 import { User } from '../models/user.model';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { AuditAction } from '../enums/audit-action.enum';
 import { AuditEntityType } from '../enums/audit-entity-type.enum';
+import { AuditLogRequest } from './types/audit-log-request.interface';
 
 // Интерфейс клиента gRPC
 interface AuditServiceClient {
-  LogAction(data: any): Promise<{ success: boolean }>;
+  LogAction(data: AuditLogRequest): Observable<{ success: boolean }>;
 }
 
 @Injectable()
@@ -65,12 +67,14 @@ export class UsersService {
   // Логирование аудита
   private async logAudit(action: AuditAction, entityId: string) {
     try {
-       const result = await this.auditClient.LogAction({
+      const payload = {
         action,
         entity_type: AuditEntityType.User,
         entity_id: entityId,
         timestamp: new Date().toISOString(),
-      });
+      }
+      console.log('Sending to audit client:', payload);
+      const result = await firstValueFrom(this.auditClient.LogAction(payload));
       !result.success && console.warn('Audit log failed');
     } catch (error: any) {
       console.error('Audit log error:', error.message);
