@@ -3,24 +3,15 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersController } from './users/controllers/users.controller';
 import { UsersService } from './users/services/users.service';
+import { sequelizeConfig } from './config/sequelize.config';
 import { User } from './users/models/user.model';
 import { join } from 'path';
 
 // Модуль подключения БД и gRPC-клиента
 @Module({
   imports: [
-    SequelizeModule.forRoot({
-      dialect: 'postgres',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      models: [User],
-      autoLoadModels: true,
-      synchronize: true,
-    }),
-    SequelizeModule.forFeature([User]),
+    SequelizeModule.forRoot(sequelizeConfig), // подлкючение к базе данных
+    SequelizeModule.forFeature([User]),       // регисрация модели User
     ClientsModule.register([
       {
         name: 'AUDIT_PACKAGE',
@@ -36,4 +27,4 @@ import { join } from 'path';
   controllers: [UsersController],
   providers: [UsersService],
 })
-export class AppModule {}
+export class UserModule {}

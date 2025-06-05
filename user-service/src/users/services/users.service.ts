@@ -36,12 +36,12 @@ export class UsersService {
 
   // Получение всех пользователей
   async findAll(): Promise<User[]> {
-    return this.userModel.findAll({ where: { deleted_at: null } });
+    return this.userModel.findAll({ where: { deletedAt: null } });
   }
 
   // Получение пользователя по ID
   async findOne(id: string): Promise<User> {
-    const user = await this.userModel.findOne({ where: { id, deleted_at: null } });
+    const user = await this.userModel.findOne({ where: { id, deletedAt: null } });
     if (!user) throw new NotFoundException(`User with ID ${id} not found`);
     return user;
   }
@@ -64,14 +64,6 @@ export class UsersService {
 
   // Логирование аудита
   private async logAudit(action: AuditAction, entityId: string) {
-    const payload = {
-      action,
-      entity_type: AuditEntityType.User,
-      entity_id: entityId,
-      timestamp: new Date().toISOString(),
-    };
-
-    console.log('Send to AuditService:', payload);
     try {
        const result = await this.auditClient.LogAction({
         action,

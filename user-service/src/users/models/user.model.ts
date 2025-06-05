@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, CreatedAt, UpdatedAt, DeletedAt } from 'sequelize-typescript';
 import { UserCreation } from "./types/user-creation.interface";
 
 // Создание модели для пользователей
@@ -13,12 +13,15 @@ export class User extends Model<User, UserCreation> {
   @Column({ type: DataType.STRING, unique: true })
   email: string;
 
-  @Column({ type: DataType.DATE })
-  created_at: Date;
+  @CreatedAt
+  @Column({ field: 'created_at', type: DataType.DATE })
+  createdAt: Date;
 
-  @Column({ type: DataType.DATE })
-  updated_at: Date;
+  @UpdatedAt
+  @Column({ field: 'updated_at', type: DataType.DATE })
+  updatedAt: Date;
 
-  @Column({ type: DataType.DATE })
-  deleted_at: Date | null;
+  @DeletedAt
+  @Column({ field: 'deleted_at', type: DataType.DATE })
+  deletedAt: Date | null;
 }

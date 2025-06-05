@@ -14,6 +14,7 @@ export class AuditController {
 
   @GrpcMethod('AuditService', 'LogAction')
   async logAction(data: AuditLogDto): Promise<LogResponse> {
+    console.log('data: ', data);
     const success = await this.auditService.logAction(data);
     return { success };
   }
